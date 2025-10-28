@@ -53,15 +53,14 @@ namespace HTMLToQPDF.Components
             { "ql-align-center", c => c.AlignCenter() },
             { "ql-align-right", c => c.AlignRight() },
             { "ql-align-left", c => c.AlignLeft() },
-            { "ql-align-justify", c => c.AlignLeft() } // Container doesn't have justify, text will handle it
         };
 
         public Dictionary<string, Action<TextDescriptor>> ClassTextAlignments { get; } = new Dictionary<string, Action<TextDescriptor>>()
         {
             { "ql-align-center", t => t.AlignCenter() },
             { "ql-align-right", t => t.AlignRight() },
-            { "ql-align-left", t => t.AlignLeft() }
-            // Note: Justify not available in QuestPDF 2023.12.5
+            { "ql-align-left", t => t.AlignLeft() },
+            { "ql-align-justify", t => t.Justify() }
         };
 
         public float ListVerticalPadding { get; set; } = 12;

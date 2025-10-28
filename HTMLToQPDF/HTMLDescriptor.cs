@@ -73,6 +73,28 @@ namespace HTMLQuestPDF
         {
             PDFPage.ListVerticalPadding = UnitUtils.ToPoints(value, unit);
         }
+
+        public void ClearClassTextStyles()
+        {
+            PDFPage.ClassTextStyles.Clear();
+        }
+
+        public void ClearClassContainerStyles()
+        {
+            PDFPage.ClassContainerStyles.Clear();
+        }
+
+        public void ClearClassTextAlignments()
+        {
+            PDFPage.ClassTextAlignments.Clear();
+        }
+
+        public void ClearDefaultClassStyles()
+        {
+            ClearClassTextStyles();
+            ClearClassContainerStyles();
+            ClearClassTextAlignments();
+        }
     }
 
     public enum Alignment
