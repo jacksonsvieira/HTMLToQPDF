@@ -151,5 +151,18 @@ namespace HTMLQuestPDF.Extensions
             url = "";
             return false;
         }
+
+        public static IEnumerable<string> GetClasses(this HtmlNode node)
+        {
+            var classAttr = node.GetAttributeValue("class", "");
+            if (string.IsNullOrWhiteSpace(classAttr))
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            return classAttr.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                           .Select(c => c.Trim())
+                           .Where(c => !string.IsNullOrWhiteSpace(c));
+        }
     }
 }

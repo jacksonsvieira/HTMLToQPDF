@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>Relorer.QuestPDF.HTML</Title>
-    <Company></Company>
     <Authors>Relorer</Authors>
     <Description>Relorer.QuestPDF.HTML is an extension for QuestPDF that allows to generate PDF from HTML</Description>
     <PackageProjectUrl>https://github.com/Relorer/HTMLToQPDF</PackageProjectUrl>
@@ -25,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
-    <PackageReference Include="QuestPDF" Version="2023.12.5" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="QuestPDF" Version="2025.7.3" />
   </ItemGroup>
 
   <ItemGroup>

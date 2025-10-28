@@ -46,6 +46,24 @@ namespace HTMLToQPDF.Components
             { "ol", c => c.PaddingLeft(30) }
         };
 
+        public Dictionary<string, TextStyle> ClassTextStyles { get; } = new Dictionary<string, TextStyle>();
+
+        public Dictionary<string, Func<IContainer, IContainer>> ClassContainerStyles { get; } = new Dictionary<string, Func<IContainer, IContainer>>()
+        {
+            { "ql-align-center", c => c.AlignCenter() },
+            { "ql-align-right", c => c.AlignRight() },
+            { "ql-align-left", c => c.AlignLeft() },
+            { "ql-align-justify", c => c.AlignLeft() } // Container doesn't have justify, text will handle it
+        };
+
+        public Dictionary<string, Action<TextDescriptor>> ClassTextAlignments { get; } = new Dictionary<string, Action<TextDescriptor>>()
+        {
+            { "ql-align-center", t => t.AlignCenter() },
+            { "ql-align-right", t => t.AlignRight() },
+            { "ql-align-left", t => t.AlignLeft() }
+            // Note: Justify not available in QuestPDF 2023.12.5
+        };
+
         public float ListVerticalPadding { get; set; } = 12;
 
         public string HTML { get; set; } = "";
@@ -58,7 +76,14 @@ namespace HTMLToQPDF.Components
 
             CreateSeparateBranchesForTextNodes(node);
 
-            container.Component(node.GetComponent(new HTMLComponentsArgs(TextStyles, ContainerStyles, ListVerticalPadding, GetImgBySrc)));
+            container.Component(node.GetComponent(new HTMLComponentsArgs(
+                TextStyles,
+                ContainerStyles,
+                ClassTextStyles,
+                ClassContainerStyles,
+                ClassTextAlignments,
+                ListVerticalPadding,
+                GetImgBySrc)));
         }
 
         /// <summary>

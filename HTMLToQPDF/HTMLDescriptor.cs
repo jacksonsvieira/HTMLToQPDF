@@ -1,5 +1,6 @@
 ﻿using HTMLToQPDF.Components;
 using HTMLToQPDF.Utils;
+using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 
 namespace HTMLQuestPDF
@@ -28,9 +29,57 @@ namespace HTMLQuestPDF
             PDFPage.ContainerStyles[tagName.ToLower()] = style;
         }
 
+        public void SetTextStyleForClass(string className, TextStyle style)
+        {
+            PDFPage.ClassTextStyles[className] = style;
+        }
+
+        public void SetContainerStyleForClass(string className, Func<IContainer, IContainer> style)
+        {
+            PDFPage.ClassContainerStyles[className] = style;
+        }
+
+        public void SetTextAlignmentForClass(string className, Action<TextDescriptor> alignment)
+        {
+            PDFPage.ClassTextAlignments[className] = alignment;
+        }
+
+        public void SetAlignmentForClass(string className, Alignment alignment)
+        {
+            switch (alignment)
+            {
+                case Alignment.Center:
+                    PDFPage.ClassContainerStyles[className] = c => c.AlignCenter();
+                    PDFPage.ClassTextAlignments[className] = t => t.AlignCenter();
+                    break;
+                case Alignment.Right:
+                    PDFPage.ClassContainerStyles[className] = c => c.AlignRight();
+                    PDFPage.ClassTextAlignments[className] = t => t.AlignRight();
+                    break;
+                case Alignment.Left:
+                    PDFPage.ClassContainerStyles[className] = c => c.AlignLeft();
+                    PDFPage.ClassTextAlignments[className] = t => t.AlignLeft();
+                    break;
+                case Alignment.Justify:
+                    // Note: Justify not available in QuestPDF 2023.12.5
+                    // Fallback to left alignment
+                    PDFPage.ClassContainerStyles[className] = c => c.AlignLeft();
+                    PDFPage.ClassTextAlignments[className] = t => t.AlignLeft();
+                    break;
+            }
+        }
+
         public void SetListVerticalPadding(float value, Unit unit = Unit.Point)
         {
             PDFPage.ListVerticalPadding = UnitUtils.ToPoints(value, unit);
         }
+    }
+
+    public enum Alignment
+    {
+        Left,
+        Center,
+        Right,
+        Justify
     }
 }

@@ -9,12 +9,12 @@ namespace HTMLQuestPDF.Components
     internal class ParagraphComponent : IComponent
     {
         private readonly List<HtmlNode> lineNodes;
-        private readonly Dictionary<string, TextStyle> textStyles;
+        private readonly HTMLComponentsArgs args;
 
         public ParagraphComponent(List<HtmlNode> lineNodes, HTMLComponentsArgs args)
         {
             this.lineNodes = lineNodes;
-            this.textStyles = args.TextStyles;
+            this.args = args;
         }
 
         private HtmlNode? GetParrentBlock(HtmlNode node)
@@ -27,6 +27,27 @@ namespace HTMLQuestPDF.Components
         {
             if (node == null || node.IsList()) return null;
             return node.IsListItem() ? node : GetListItemNode(node.ParentNode);
+        }
+
+        private void ApplyClassTextAlignments(HtmlNode node, TextDescriptor text)
+        {
+            if (node == null) return;
+
+            // Get classes from this node and apply alignments
+            var classes = node.GetClasses();
+            foreach (var className in classes)
+            {
+                if (args.ClassTextAlignments.TryGetValue(className, out var alignment))
+                {
+                    alignment(text);
+                }
+            }
+
+            // Also check parent nodes for alignment classes
+            if (node.ParentNode != null)
+            {
+                ApplyClassTextAlignments(node.ParentNode, text);
+            }
         }
 
         public void Compose(IContainer container)
@@ -52,7 +73,14 @@ namespace HTMLQuestPDF.Components
             first.InnerHtml = first.InnerHtml.TrimStart();
             last.InnerHtml = last.InnerHtml.TrimEnd();
 
-            container.Text(GetAction(lineNodes));
+            container.Text(text =>
+            {
+                // Apply class-based text alignments from the block parent or list item
+                ApplyClassTextAlignments(listItemNode, text);
+
+                // Apply the text content
+                GetAction(lineNodes)(text);
+            });
         }
 
         private Action<TextDescriptor> GetAction(List<HtmlNode> nodes)
@@ -109,7 +137,22 @@ namespace HTMLQuestPDF.Components
 
         public TextStyle GetTextStyle(HtmlNode element)
         {
-            return textStyles.TryGetValue(element.Name.ToLower(), out TextStyle? style) ? style : TextStyle.Default;
+            // Start with tag-based style
+            var style = args.TextStyles.TryGetValue(element.Name.ToLower(), out TextStyle? tagStyle)
+                ? tagStyle
+                : TextStyle.Default;
+
+            // Apply class-based styles (classes override tags)
+            var classes = element.GetClasses();
+            foreach (var className in classes)
+            {
+                if (args.ClassTextStyles.TryGetValue(className, out var classStyle))
+                {
+                    style = classStyle;
+                }
+            }
+
+            return style;
         }
     }
 }

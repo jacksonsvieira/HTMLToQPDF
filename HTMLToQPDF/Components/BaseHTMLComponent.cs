@@ -35,7 +35,21 @@ namespace HTMLQuestPDF.Components
 
         protected virtual IContainer ApplyStyles(IContainer container)
         {
-            return args.ContainerStyles.TryGetValue(node.Name.ToLower(), out var style) ? style(container) : container;
+            if (args.ContainerStyles.TryGetValue(node.Name.ToLower(), out var tagStyle))
+            {
+                container = tagStyle(container);
+            }
+
+            var classes = node.GetClasses();
+            foreach (var className in classes)
+            {
+                if (args.ClassContainerStyles.TryGetValue(className, out var classStyle))
+                {
+                    container = classStyle(container);
+                }
+            }
+
+            return container;
         }
 
         protected virtual void ComposeSingle(IContainer container)
